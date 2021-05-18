@@ -1,0 +1,25 @@
+import os
+import cv2
+import numpy as np
+from PIL import Image
+recognizer = cv2.face.LBPHFaceRecognizer_create()
+path = 'cascade'
+def getImageWithLabels(path):
+    imagePaths=[os.path.join(path,f) for f in os.listdir(path) if not f.startswith('.')]
+    face=[]
+    labels=[]
+    for imagePath in imagePaths:
+        faceImg=Image.open(imagePath).convert('L')
+        faceNp=np.array(faceImg,'uint8')
+        nbr=int(os.path.split(imagePath)[-1].split('.')[1])
+        face.append(faceNp)
+        print (nbr)
+        labels.append(nbr)
+        cv2.imshow("training",faceNp)
+        cv2.waitKey(10)
+    return labels, face
+
+labels,face=getImageWithLabels(path)
+recognizer.train(face,np.array(labels))
+recognizer.save('recognizer/trainingData.yml')
+cv2.destroyAllWindows()

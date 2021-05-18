@@ -1,0 +1,37 @@
+import cv2
+faceCascade = cv2.CascadeClassifier("casacde.xml")
+video_capture = cv2.VideoCapture(0)
+id=input('enter user id')
+sampleNum=0
+while True:
+    # Capture frame-by-frame
+
+    ret, frame = video_capture.read()
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    faces = faceCascade.detectMultiScale(
+     gray,
+     scaleFactor=1.1,
+     minNeighbors=5,
+     minSize=(30, 30)
+     )
+
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        sampleNum=sampleNum+1
+        cv2.imwrite("dataSet/user."+str(id)+"."+str(sampleNum)+".jpg",gray[y:y+h,x:x+w])
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+    # Display the resulting frame
+    cv2.waitKey(100)
+    cv2.imshow('Video', frame)
+    cv2.waitKey(1)
+    if(sampleNum>100):
+        break
+   
+     
+
+# When everything is done, release the capture
+video_capture.release()
+cv2.destroyAllWindows()
